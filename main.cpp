@@ -31,46 +31,58 @@ int main()
     Player& first = response == 0 ? user : enemy;
     Player& second = response == 1 ? user : enemy;
 
-    std::cout << "isPlayer " << first.getIsPlayer() << " " <<  second.getIsPlayer() << std::endl;
-
-    Board board(user.getTurn(), enemy.getTurn());
+    Board board(user.GetTurn(), enemy.GetTurn());
 
     // Game Loop.
-    while (user.getPieceCount() != 0 && enemy.getPieceCount() != 0)
+    while (user.GetPieceCount() != 0 && enemy.GetPieceCount() != 0)
     {
-        board.drawBoard();
+        board.DrawBoard();
         std::vector<std::vector<int>> jumpPieces;
+
+        std::cout << user.GetPieceCount() << " " << enemy.GetPieceCount() << std::endl;
 
         // Player 1 goes first. 
         if (turn % 2 == 0)
         {
-            jumpPieces = board.getJumpPieces(first.getTurn(), turn);
+            jumpPieces = board.GetJumpPieces(first.GetTurn(), turn);
 
             if (jumpPieces.size() > 0)
             {
-                first.performJumpMove(board, jumpPieces, second, turn);
+                first.PerformJumpMove(board, jumpPieces, second, turn);
             }
             else
             {
-                first.performRegMove(board, second, turn);
+                first.PerformRegMove(board, second, turn);
             }
         }
         else
         {
-            jumpPieces = board.getJumpPieces(second.getTurn(), turn);
+            jumpPieces = board.GetJumpPieces(second.GetTurn(), turn);
 
             if (jumpPieces.size() > 0)
             {
-                second.performJumpMove(board, jumpPieces, first, turn);
+                second.PerformJumpMove(board, jumpPieces, first, turn);
             }
             else
             {
-                second.performRegMove(board, first, turn);
+                second.PerformRegMove(board, first, turn);
             }
         }
+        // TO-DO get rid of else block and just swap first and second places.
 
         turn++;
     }
+
+    if (user.GetPieceCount() == 0)
+    {
+        std::cout << "You Lost! " << " The enemy won with " << enemy.GetPieceCount() << " pieces on the board." << std::endl;
+    }
+    else
+    {
+        std::cout << "You WON, with " << user.GetPieceCount() << " pieces on the board." << std::endl;
+    }
+
+    std::cout << "Goodbye!";
 
     return 0;
 }

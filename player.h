@@ -1,5 +1,4 @@
-#ifndef PLAYER_H  // Helps defend program from redefinition compilation errors.
-#define PLAYER_H
+#pragma once
 
 #include "board.h"
 #include <string>
@@ -17,24 +16,22 @@ private:
 public: 
     Player(int turn, int pieceCount, bool isPlayer);
 
-    void performJumpMove(Board& board, std::vector<std::vector<int>>& jumpPieces, Player enemyPlayer, int turn);
+    void PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPieces, Player& enemyPlayer, int turn);
 
-    void performRegMove(Board& board, Player& enemyPlayer, int turn);
+    void PerformRegMove(Board& board, Player& enemyPlayer, int turn);
 
-    void performMove(Board& board, const std::vector<std::vector<int>>& moves, const std::vector<int>& newMove, const std::vector<int>& currMove, bool isJump);
+    void PerformMove(Board& board, const std::vector<std::vector<int>>& moves, const std::vector<int>& newMove, const std::vector<int>& currMove, bool isJump);
 
-    bool findMove(const std::vector<std::vector<int>>& moveBank, const std::vector<int>& move);
+    bool FindMove(const std::vector<std::vector<int>>& moveBank, const std::vector<int>& move);
 
-    Piece execPlayerMove(Board& board, const std::vector<std::vector<int>>& moves, const std::vector<int>& currMove, bool isJump);
+    Piece ExecPlayerMove(Board& board, const std::vector<std::vector<int>>& moves, const std::vector<int>& currMove, bool isJump);
 
     // Getters & Setters
-    int getPieceCount();
+    int GetPieceCount();
 
-    int getTurn();
+    int GetTurn();
 
-    bool getIsPlayer();
+    bool GetIsPlayer();
 
-    void setTakePiece();
+    void SetTakePiece();
 };
-
-#endif

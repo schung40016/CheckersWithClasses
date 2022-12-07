@@ -8,33 +8,49 @@ Piece::Piece(int param_type, int param_team, const std::vector<int>& currPos, co
     this->cardinalDir = cardinalDir;
 }
 
+void Piece::Promote(int pieceType)
+{
+    this->type = pieceType;
+    this->cardinalDir = {{1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+} 
+
 // Setters and Getters.
-int Piece::getType()
+int Piece::GetType()
 {
     return this->type;
 }
 
-const std::vector<int>& Piece::getCurrPosition()
+const std::vector<int>& Piece::GetCurrPosition()
 {
     return this->currPosition; 
 }
 
-const std::vector<std::vector<int>>& Piece::getCardinalDir()
+const std::vector<std::vector<int>>& Piece::GetCardinalDir()
 {
     return this->cardinalDir;
 }
 
-int Piece::getTeam()
+int Piece::GetTeam()
 {
     return this->team;
 }
 
-void Piece::setType(int param_type)
+void Piece::SetTeam(int param_team)
+{
+    this->team = param_team;
+}
+
+void Piece::SetType(int param_type)
 {
     this->type = param_type;
 }
 
-void Piece::setCurrPosition(const std::vector<int>& param_currPosition)
+void Piece::SetCurrPosition(const std::vector<int>& param_currPosition)
 {
     this->currPosition = param_currPosition;
+}
+
+void Piece::SetCardinalDir(const std::vector<std::vector<int>>& param_cardinalDir)
+{
+    this->cardinalDir = param_cardinalDir;
 }

@@ -11,7 +11,7 @@ Board::Board (int userTurn, int enemyTurn)
     std::vector<std::vector<int>> enemyDir = {{-1, -1}, {1, -1}};
 
     // Set enemy pieces.
-    printBlock(userTurn, rowCount, 0, 3, playerDir);
+    PrintBlock(userTurn, rowCount, 0, 3, playerDir);
 
     // Set Middle space.
     for (int i = 3; i < 5; ++i)
@@ -25,10 +25,10 @@ Board::Board (int userTurn, int enemyTurn)
     }
 
     // Set player pieces.
-    printBlock(enemyTurn, rowCount, 5, 8, enemyDir);
+    PrintBlock(enemyTurn, rowCount, 5, 8, enemyDir);
 }
 
-void Board::drawBoard ()
+void Board::DrawBoard ()
 {
     std::cout << "\n\n\n";
     for (int i = board.size() - 1; i >= 0; --i)
@@ -36,7 +36,7 @@ void Board::drawBoard ()
         std::cout << i << " " << char(-70); 
         for (size_t j{0}; j < board[i].size(); ++j)
         {
-            board[i][j].getType() == 32 ? std::cout << "  " : std::cout << char(board[i][j].getType()) << " ";
+            board[i][j].GetType() == 32 ? std::cout << "  " : std::cout << char(board[i][j].GetType()) << " ";
         }
         std::cout << "\n";
     }
@@ -50,12 +50,12 @@ void Board::drawBoard ()
     std::cout << "   0 1 2 3 4 5 6 7\n";
 } 
 
-void Board::printBlock(int team, int rowSize, int start, int end, const std::vector<std::vector<int>>& pieceDir)
+void Board::PrintBlock(int team, int rowSize, int start, int end, const std::vector<std::vector<int>>& pieceDir)
 {
     for (int i = start; i < end; ++i)
     {
         std::vector<Piece> tempRow;
-        if (i % 2 == 0) // Check if even row.
+        if (i % 2 == 0) 
         {
             for (int j = 0; j < rowSize; ++j)
             {
@@ -73,42 +73,39 @@ void Board::printBlock(int team, int rowSize, int start, int end, const std::vec
     }
 }
 
-bool Board::outOfBounds(std::vector<int> param_position)
+bool Board::OutOfBounds(std::vector<int> param_position)
 {
-    if (param_position[0] < 0 || param_position[0] > board.size() || param_position[1] < 0 || param_position[1] > board[0].size())
+    // If X and Y are within the bounds
+    if (!(param_position[0] >= 0 && param_position[0] < board.size()) || !(param_position[1] >= 0 && param_position[1] < board[0].size()))
     {
         return true;
     }
     return false;
 }
 
-// TO-DO: Work on this method.
-bool Board::isJumpPiece(Piece mainPiece, int turn)
+bool Board::IsJumpPiece(Piece mainPiece, int turn)
 {
-    std::vector<std::vector<int>> cardinalDir = mainPiece.getCardinalDir();
-    std::vector<int> currPosition = mainPiece.getCurrPosition();
-
-    //std::cout << "G/O: {" << currPosition[0] << ", " << currPosition[1] << "}" << (char)board[currPosition[0]][currPosition[1]].getType() << std::endl;
+    std::vector<std::vector<int>> cardinalDir = mainPiece.GetCardinalDir();
+    std::vector<int> currPosition = mainPiece.GetCurrPosition();
 
     for (std::vector<int> pos : cardinalDir)
     {
         int newX = currPosition[0] + pos[1];
         int newY = currPosition[1] + pos[0];
 
-        if (outOfBounds({newX, newY}))
+        if (OutOfBounds({newX, newY}))
         {
             continue;
         }
-
-        if (!(board[newX][newY].getTeam() == mainPiece.getTeam() || board[newX][newY].getType() == 32))
+        if (!(board[newX][newY].GetTeam() == mainPiece.GetTeam() || board[newX][newY].GetType() == 32))
         {
             newX = currPosition[0] + (pos[1] * 2);
             newY = currPosition[1] + (pos[0] * 2);
 
             // Check if landing position is blocked.
-            if (!outOfBounds({newX, newY})) 
+            if (!OutOfBounds({newX, newY})) 
             {
-                if (board[newX][newY].getType() == 32)
+                if (board[newX][newY].GetType() == 32)
                 {
                     return true;
                 }
@@ -119,7 +116,7 @@ bool Board::isJumpPiece(Piece mainPiece, int turn)
     return false;
 }
 
-std::vector<std::vector<int>> Board::getJumpPieces(int currentPlayer, int turn)
+std::vector<std::vector<int>> Board::GetJumpPieces(int currentPlayer, int turn)
 {
     std::vector<std::vector<int>> jumpPieces = {};
 
@@ -128,11 +125,9 @@ std::vector<std::vector<int>> Board::getJumpPieces(int currentPlayer, int turn)
         for (int j = 0; j < board[i].size(); ++j)
         {
             // Check piece's team.
-            int pieceTeam = board[i][j].getTeam();
-
-            if (pieceTeam == currentPlayer)
+            if (board[i][j].GetTeam() == currentPlayer)
             {
-                if (isJumpPiece(board[i][j], turn))
+                if (IsJumpPiece(board[i][j], turn))
                 {   
                     // We found a jump piece, get the position of that piece. 
                     jumpPieces.push_back({i, j});
@@ -143,7 +138,7 @@ std::vector<std::vector<int>> Board::getJumpPieces(int currentPlayer, int turn)
     return jumpPieces;
 }
 
-std::vector<std::vector<int>> Board::getLegalPieces(int currentPlayer, int turn)
+std::vector<std::vector<int>> Board::GetLegalPieces(int currentPlayer, int turn)
 {
     std::vector<std::vector<int>> pieceList;
 
@@ -152,11 +147,11 @@ std::vector<std::vector<int>> Board::getLegalPieces(int currentPlayer, int turn)
         for (int j = 0; j < board[i].size(); ++j)
         {
             // Ignore empty pieces.
-            if (board[i][j].getType() != 0)
+            if (board[i][j].GetType() != noTeam)
             {
-                int pieceTeam = board[i][j].getTeam();
+                int pieceTeam = board[i][j].GetTeam();
 
-                if (getAllMoves(board[i][j], turn).size() > 0 && pieceTeam == currentPlayer)
+                if (GetAllMoves(board[i][j], turn).size() > 0 && pieceTeam == currentPlayer)
                 {
                     pieceList.push_back({i, j});
                     continue;
@@ -168,15 +163,15 @@ std::vector<std::vector<int>> Board::getLegalPieces(int currentPlayer, int turn)
     return pieceList;
 }
 
-std::vector<std::vector<int>> Board::getAllMoves(Piece mainPiece, int turn)
+std::vector<std::vector<int>> Board::GetAllMoves(Piece mainPiece, int turn)
 {
-    std::vector<std::vector<int>> potentialMoves = mainPiece.getCardinalDir();
+    std::vector<std::vector<int>> potentialMoves = mainPiece.GetCardinalDir();
     std::vector<std::vector<int>> result;
     std::vector<std::vector<int>> jumpMoves;
-    std::vector<int> currPosition = mainPiece.getCurrPosition();
+    std::vector<int> currPosition = mainPiece.GetCurrPosition();
 
     // Determine available directional moves.
-    potentialMoves = mainPiece.getCardinalDir();
+    potentialMoves = mainPiece.GetCardinalDir();
 
     for (std::vector<int> pos : potentialMoves)
     {
@@ -184,28 +179,28 @@ std::vector<std::vector<int>> Board::getAllMoves(Piece mainPiece, int turn)
         int newY = currPosition[1] + pos[0];
 
         // Check if invalid space.
-        if (outOfBounds({newX, newY}))
+        if (OutOfBounds({newX, newY}))
         {
             continue;
         }
         // Check potential jumps.
-        else if (!(board[newX][newY].getTeam() == mainPiece.getTeam() || board[newX][newY].getType() == 32))
+        else if (!(board[newX][newY].GetTeam() == mainPiece.GetTeam() || board[newX][newY].GetType() == 32))
         {
             newX = currPosition[0] + (pos[1] * 2);
             newY = currPosition[1] + (pos[0] * 2);
 
-            if (!outOfBounds({newX, newY}))
+            if (!OutOfBounds({newX, newY}))
             {
-                drawBoard();
+                DrawBoard();
 
                 // Check if landing position is blocked.
-                if (board[newX][newY].getType() == 32)
+                if (board[newX][newY].GetType() == 32)
                 {
                     jumpMoves.push_back({newX, newY});
                 }
             }
         }
-        else if (board[newX][newY].getType() == 32)
+        else if (board[newX][newY].GetType() == noTeam)
         {
             result.push_back({newX, newY});
         }
@@ -228,36 +223,43 @@ std::vector<std::vector<int>> Board::getAllMoves(Piece mainPiece, int turn)
 void Board::SwapPieces(int currMoveX, int currMoveY, int newX, int newY)
 {
     Piece temp = board[newX][newY]; 
-    board[newX][newY] = board[currMoveX][currMoveX];
-    board[newX][newY].setCurrPosition(board[currMoveX][currMoveX].getCurrPosition());
+    board[newX][newY] = board[currMoveX][currMoveY];
+    board[newX][newY].SetCurrPosition({newX,newY});
     board[currMoveX][currMoveY] = temp;
-    board[currMoveX][currMoveY].setCurrPosition(temp.getCurrPosition());
+    board[currMoveX][currMoveY].SetCurrPosition({currMoveX, currMoveY});
 }
 
 void Board::HighlightMove(int x, int y)
 {
-    board[x][y].setType('X');
+    board[x][y].SetType('X');
 }
 
 void Board::EraseHighlight(int x, int y)
 {
-    board[x][y].setType(' ');
+    board[x][y].SetType(' ');
+}
+
+void Board::TakePiece(int x, int y)
+{
+    board[x][y].SetType(' ');
+    board[x][y].SetTeam(noTeam);
+    board[x][y].SetCardinalDir({{}});
 }
 
 void Board::CheckKingPiece(int x, int y, bool isPlayer)
 {
     // Any super pieces to transform?
-    if (x == board.size() && isPlayer)
+    if (x == (board.size() - 1) && isPlayer)
     {
-        board[x][y].getType() == regFirstPiece ? board[x][y].setType(kingFirstPiece) : board[x][y].setType(kingSecPiece);
+        board[x][y].GetType() == regFirstPiece ? board[x][y].Promote(kingFirstPiece) : board[x][y].Promote(kingSecPiece);
     }
     else if(x == 0 && !isPlayer)
     {
-        board[x][y].getType() == regFirstPiece ? board[x][y].setType(kingFirstPiece) : board[x][y].setType(kingSecPiece);
+        board[x][y].GetType() == regFirstPiece ? board[x][y].Promote(kingFirstPiece) : board[x][y].Promote(kingSecPiece);
     }
 }
 
-std::vector<std::vector<Piece>>& Board::getBoard()
+std::vector<std::vector<Piece>>& Board::GetBoard()
 {
     return this->board;
 }

@@ -1,5 +1,4 @@
-#ifndef BOARD_H  // Helps defend program from redefinition compilation errors.
-#define BOARD_H
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -20,30 +19,31 @@ private:
 public: 
     Board(int userTurn, int enemyTurn);
 
-    void drawBoard();
+    void DrawBoard();
     
-    void printBlock(int team, int rowSize, int start, int end, const std::vector<std::vector<int>>& pieceDir);
+    void PrintBlock(int team, int rowSize, int start, int end, const std::vector<std::vector<int>>& pieceDir);
     
-    bool outOfBounds(std::vector<int> param_position);
+    bool OutOfBounds(std::vector<int> param_position);
 
-    bool isJumpPiece(Piece mainPiece, int turn);
+    bool IsJumpPiece(Piece mainPiece, int turn);
 
-    std::vector<std::vector<int>> getJumpPieces(int currentPlayer, int turn);
+    std::vector<std::vector<int>> GetJumpPieces(int currentPlayer, int turn);
 
-    std::vector<std::vector<int>> getLegalPieces(int currentPlayer, int turn);
+    std::vector<std::vector<int>> GetLegalPieces(int currentPlayer, int turn);
 
-    std::vector<std::vector<int>> getAllMoves(Piece mainPiece, int turn);
+    std::vector<std::vector<int>> GetAllMoves(Piece mainPiece, int turn);
 
     void SwapPieces(int currMoveX, int currMoveY, int newX, int newY);
 
     void HighlightMove(int x, int y);
+
+    void TakePiece(int x, int y);
 
     void EraseHighlight(int x, int y);
 
     void CheckKingPiece(int x, int y, bool isPlayer);
 
     // Setters and Getters
-    vector<vector<Piece>>& getBoard();
+    vector<vector<Piece>>& GetBoard();
 };
 
-#endif

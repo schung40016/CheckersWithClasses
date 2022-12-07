@@ -1,5 +1,4 @@
-#ifndef PIECE_H  // Helps defend program from redefinition compilation errors.
-#define PIECE_H
+#pragma once
 
 #include <vector>
 
@@ -14,18 +13,22 @@ private:
 public:
     Piece(int param_type, int param_team, const std::vector<int>& param_currPos, const std::vector<std::vector<int>>& cardinalDir);
 
+    void Promote(int pieceType);
+
     //Getters and Setters
-    int getType();
+    int GetType();
 
-    const std::vector<int>& getCurrPosition();
+    const std::vector<int>& GetCurrPosition();
 
-    const std::vector<std::vector<int>>& getCardinalDir();
+    const std::vector<std::vector<int>>& GetCardinalDir();
 
-    int getTeam();
+    int GetTeam();
 
-    void setType(int param_type);
+    void SetTeam(int param_team);
 
-    void setCurrPosition(const std::vector<int>& param_currPosition);
+    void SetType(int param_type);
+
+    void SetCurrPosition(const std::vector<int>& param_currPosition);
+
+    void SetCardinalDir(const std::vector<std::vector<int>>& param_cardinalDir);
 };
-
-#endif
