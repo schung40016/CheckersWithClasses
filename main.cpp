@@ -39,36 +39,21 @@ int main()
         board.DrawBoard();
         std::vector<std::vector<int>> jumpPieces;
 
-        std::cout << user.GetPieceCount() << " " << enemy.GetPieceCount() << std::endl;
+        std::cout << "Current Score: " << std::endl;
+        std::cout << "Player: "<< user.GetPieceCount() << ", Enemy: " << enemy.GetPieceCount() << std::endl;
 
-        // Player 1 goes first. 
-        if (turn % 2 == 0)
+        jumpPieces = board.GetJumpPieces(first.GetTurn(), turn);
+
+        if (jumpPieces.size() > 0)
         {
-            jumpPieces = board.GetJumpPieces(first.GetTurn(), turn);
-
-            if (jumpPieces.size() > 0)
-            {
-                first.PerformJumpMove(board, jumpPieces, second, turn);
-            }
-            else
-            {
-                first.PerformRegMove(board, second, turn);
-            }
+            first.PerformJumpMove(board, jumpPieces, second, turn);
         }
         else
         {
-            jumpPieces = board.GetJumpPieces(second.GetTurn(), turn);
-
-            if (jumpPieces.size() > 0)
-            {
-                second.PerformJumpMove(board, jumpPieces, first, turn);
-            }
-            else
-            {
-                second.PerformRegMove(board, first, turn);
-            }
+            first.PerformRegMove(board, second, turn);
         }
-        // TO-DO get rid of else block and just swap first and second places.
+
+        std::swap(first, second);
 
         turn++;
     }

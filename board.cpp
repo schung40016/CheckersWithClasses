@@ -249,11 +249,7 @@ void Board::TakePiece(int x, int y)
 void Board::CheckKingPiece(int x, int y, bool isPlayer)
 {
     // Any super pieces to transform?
-    if (x == (board.size() - 1) && isPlayer)
-    {
-        board[x][y].GetType() == regFirstPiece ? board[x][y].Promote(kingFirstPiece) : board[x][y].Promote(kingSecPiece);
-    }
-    else if(x == 0 && !isPlayer)
+    if ((x == (board.size() - 1)  && isPlayer) || (x == 0 && !isPlayer))
     {
         board[x][y].GetType() == regFirstPiece ? board[x][y].Promote(kingFirstPiece) : board[x][y].Promote(kingSecPiece);
     }
