@@ -33,5 +33,5 @@ public:
 
     bool GetIsPlayer();
 
-    void SetTakePiece();
+    void SetTakePiece(int value);
 };

@@ -33,14 +33,33 @@ int main()
 
     Board board(user.GetTurn(), enemy.GetTurn());
 
+    bool noMoves = false;
+
     // Game Loop.
     while (user.GetPieceCount() != 0 && enemy.GetPieceCount() != 0)
     {
+        if (board.GetLegalPieces(first.GetTurn(), turn).size() == 0 && board.GetLegalPieces(second.GetTurn() , turn).size() == 0)
+        {
+            noMoves = true;
+            break;
+        }
+
+        if (board.GetLegalPieces(first.GetTurn(), turn).size() == 0)
+        {
+            first.SetTakePiece(first.GetPieceCount());
+            break;
+        }
+
+        if (board.GetLegalPieces(second.GetTurn(), turn).size() == 0)
+        {
+            second.SetTakePiece(second.GetPieceCount());
+            break;
+        }
+
         board.DrawBoard();
         std::vector<std::vector<int>> jumpPieces;
 
-        std::cout << "Current Score: " << std::endl;
-        std::cout << "Player: "<< user.GetPieceCount() << ", Enemy: " << enemy.GetPieceCount() << std::endl;
+        std::cout << "Turn Tracker: " << board.GetTurnTracker() << "." << std::endl;
 
         jumpPieces = board.GetJumpPieces(first.GetTurn(), turn);
 
@@ -56,15 +75,34 @@ int main()
         std::swap(first, second);
 
         turn++;
+
+        if (board.CheckTie())
+        {
+            break;
+        }
     }
 
-    if (user.GetPieceCount() == 0)
+    if (response != user.GetTurn())
     {
-        std::cout << "You Lost! " << " The enemy won with " << enemy.GetPieceCount() << " pieces on the board." << std::endl;
+        std::swap(user, enemy);
+    }
+
+    if (board.CheckTie() || noMoves)
+    {
+        std::cout << "Game ended in a draw! Due to one of these circumstances - " << std::endl;
+        std::cout << "No move rule: neither side could make a move." << std::endl;
+        std::cout << "40 turn rule: neither side gained an advantage for 40 consecutive turns, thus the game is a draw" << std::endl;
     }
     else
     {
-        std::cout << "You WON, with " << user.GetPieceCount() << " pieces on the board." << std::endl;
+        if (user.GetPieceCount() == 0)
+        {
+            std::cout << "You Lost! " << " The enemy won with " << enemy.GetPieceCount() << " pieces on the board." << std::endl;
+        }
+        else
+        {
+            std::cout << "You WON, with " << user.GetPieceCount() << " pieces on the board." << std::endl;
+        }
     }
 
     std::cout << "Goodbye!";

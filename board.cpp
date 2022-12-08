@@ -252,10 +252,38 @@ void Board::CheckKingPiece(int x, int y, bool isPlayer)
     if ((x == (board.size() - 1)  && isPlayer) || (x == 0 && !isPlayer))
     {
         board[x][y].GetType() == regFirstPiece ? board[x][y].Promote(kingFirstPiece) : board[x][y].Promote(kingSecPiece);
+        
+        // Player gained advantage, reset turn tracker.
+        turnTracker = 0;
     }
+}
+
+void Board::ResetTurnTracker()
+{
+    this->turnTracker = 0;
+}
+
+void Board::AddTurnTracker()
+{
+    this->turnTracker++;
+}
+
+bool Board::CheckTie()
+{
+    if (turnTracker == turnsForTie)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 std::vector<std::vector<Piece>>& Board::GetBoard()
 {
     return this->board;
+}
+
+int Board::GetTurnTracker()
+{
+    return this->turnTracker;
 }

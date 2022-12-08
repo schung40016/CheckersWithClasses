@@ -46,7 +46,7 @@ void Player::PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPi
  
             jumpPieces = board.GetJumpPieces(this->turn, turn);
 
-            enemyPlayer.SetTakePiece();
+            enemyPlayer.SetTakePiece(1);
         } while (board.IsJumpPiece(newJumpPos, turn));
     }
     else
@@ -74,7 +74,7 @@ void Player::PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPi
         
             std::cout << "Enemy moved piece {" << currPiece[0] << ", " << currPiece[1] << "} to {" << newMove[0] << ", " << newMove[1] << "}." << std::endl;;
 
-            enemyPlayer.SetTakePiece();
+            enemyPlayer.SetTakePiece(1);
         } while(board.IsJumpPiece(board.GetBoard()[newMove[0]][newMove[1]], turn)); 
     }
 }
@@ -100,7 +100,6 @@ void Player::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
             currX = playerResponse[1] - '0';
             currY = playerResponse[0] - '0';
 
-            // Crashes
             moves = board.GetLegalPieces(this->turn, turn);
 
             if (!FindMove(moves, {currX, currY}))
@@ -128,6 +127,8 @@ void Player::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
 
         // Get all legal pieces.
         moves = board.GetLegalPieces(this->turn, turn);
+
+
 
         // Fetch a random piece.
         randomInt = rand() % moves.size();
@@ -169,6 +170,9 @@ void Player::PerformMove(Board& board, const std::vector<std::vector<int>>& move
             }
         }
     }
+
+    // Check if player gained advantage or not, respond accordingly.
+    isJump ? board.ResetTurnTracker() : board.AddTurnTracker();
 
     board.CheckKingPiece(newX, newY, this->isPlayer);
 }
@@ -238,7 +242,7 @@ bool Player::GetIsPlayer()
     return this->isPlayer;
 }
 
-void Player::SetTakePiece()
+void Player::SetTakePiece(int value)
 {
-    this->pieceCount--;
+    this->pieceCount -= value;
 }

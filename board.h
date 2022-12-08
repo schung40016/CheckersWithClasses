@@ -11,10 +11,12 @@ constexpr int regSecPiece = 2;
 constexpr int kingFirstPiece = -23;
 constexpr int kingSecPiece = -24;
 constexpr int noTeam = 32;
+constexpr int turnsForTie = 40;
 
 class Board {
 private:
     vector<vector<Piece>> board;
+    int turnTracker = 0;
 
 public: 
     Board(int userTurn, int enemyTurn);
@@ -43,7 +45,15 @@ public:
 
     void CheckKingPiece(int x, int y, bool isPlayer);
 
+    void ResetTurnTracker();
+
+    void AddTurnTracker();
+
+    bool CheckTie();
+
     // Setters and Getters
     vector<vector<Piece>>& GetBoard();
+
+    int GetTurnTracker();
 };
 
