@@ -1,7 +1,6 @@
 #include "piece.h"
 #include "board.h"
 #include "player.h"
-#include <vector>
 
 int main()
 {
