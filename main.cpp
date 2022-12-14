@@ -51,12 +51,13 @@ int main()
 
         if (board.GetLegalPieces(second.GetTurn(), turn).size() == 0)
         {
+            std::cout << "how" << std::endl;
             second.SetTakePiece(second.GetPieceCount());
             break;
         }
 
         board.DrawBoard();
-        std::vector<std::vector<int>> jumpPieces;
+        std::vector<int> jumpPieces;
 
         std::cout << "Turn Tracker: " << board.GetTurnTracker() << "." << std::endl;
 

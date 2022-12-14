@@ -9,12 +9,11 @@ Player::Player (int turn, int pieceCount, bool isPlayer)
     this->isPlayer = isPlayer;
 }
 
-void Player::PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPieces, Player& enemyPlayer, int turn)
+void Player::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& enemyPlayer, int turn)
 {
-    int currX = 0;
-    int currY = 0;
-    Piece newJumpPos = board.GetBoard()[0][0];
-    std::vector<std::vector<int>> moves = {};
+    Piece newJumpPos = board.GetBoard()[0];
+    std::vector<int> moves = {};
+    int newPos = 0;
 
     if (isPlayer)
     {
@@ -30,19 +29,18 @@ void Player::PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPi
                 std::cout << "You have a piece to jump." << std::endl;
                 std::cin >> playerResponse;
 
-                currX = playerResponse[1] - '0';
-                currY = playerResponse[0] - '0';
+                newPos = ((playerResponse[1] - '0') * 8) + (playerResponse[0] - '0');
 
-                if (FindMove(jumpPieces, {currX, currY}) == false)
+                if (FindMove(jumpPieces, newPos) == false)
                 {
                     continue;
                 }
                 break;
             }
 
-            moves = board.GetAllMoves(board.GetBoard()[currX][currY], turn);
+            moves = board.GetAllMoves(board.GetBoard()[newPos], turn);
 
-            newJumpPos = ExecPlayerMove(board, moves, {currX, currY}, true);
+            newJumpPos = ExecPlayerMove(board, moves, newPos, true);
  
             jumpPieces = board.GetJumpPieces(this->turn, turn);
 
@@ -52,7 +50,7 @@ void Player::PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPi
     else
     {
         int randomInt;
-        std::vector<int> newMove = {};
+        int newMove = 0;
 
         do 
         {
@@ -63,27 +61,26 @@ void Player::PerformJumpMove(Board& board, std::vector<std::vector<int>>& jumpPi
             randomInt = rand() % jumpPieces.size();
 
             // Get a random jump move and fetch the positions.
-            std::vector<int> currPiece = jumpPieces[randomInt]; 
+            int currPiece = jumpPieces[randomInt]; 
 
-            moves = board.GetAllMoves(board.GetBoard()[currPiece[0]][currPiece[1]], turn);
+            moves = board.GetAllMoves(board.GetBoard()[currPiece], turn);
 
             randomInt = rand() % moves.size();
             newMove = moves[randomInt];
 
-            PerformMove(board, {{}}, newMove, currPiece, true);
+            PerformMove(board, {}, newMove, currPiece, true);
         
-            std::cout << "Enemy moved piece {" << currPiece[0] << ", " << currPiece[1] << "} to {" << newMove[0] << ", " << newMove[1] << "}." << std::endl;;
+            std::cout << "Enemy moved piece {" << (currPiece / 8) << ", " << (currPiece % 8) << "} to {" << (newMove / 8) << ", " << (newMove % 8) << "}." << std::endl;
 
             enemyPlayer.SetTakePiece(1);
-        } while(board.IsJumpPiece(board.GetBoard()[newMove[0]][newMove[1]], turn)); 
+        } while(board.IsJumpPiece(board.GetBoard()[newMove], turn)); 
     }
 }
 
 void Player::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
 {
-    int currX = 0;
-    int currY = 0;
-    std::vector<std::vector<int>> moves = {};
+    std::vector<int> moves = {};
+    int currPos = 0;
 
     if (isPlayer)
     {
@@ -97,76 +94,71 @@ void Player::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
             std::cout << "Pick a piece to move." << std::endl;;
             std::cin >> playerResponse;
 
-            currX = playerResponse[1] - '0';
-            currY = playerResponse[0] - '0';
+            currPos = ((playerResponse[1] - '0') * 8) + (playerResponse[0] - '0');
 
             moves = board.GetLegalPieces(this->turn, turn);
 
-            if (!FindMove(moves, {currX, currY}))
+            if (!FindMove(moves, currPos))
             {
-                std::cout << "This pick has no moves. Try again. \n" << std::endl;;
+                std::cout << "This pick has no moves. Try again. \n" << std::endl;
                 continue;
             }   
             else
             {
-                moves = board.GetAllMoves(board.GetBoard()[currX][currY], turn);
-
+                moves = board.GetAllMoves(board.GetBoard()[currPos], turn);
                 break;
             }
         }
-
-        ExecPlayerMove(board, moves, {currX, currY}, false);
+        ExecPlayerMove(board, moves, currPos, false);
     }
     else
     {
         std::cout << "Enemy moved!";
         int randomInt;
-        std::vector<int> newMove = {};
+        int newMove = 0;
 
         board.DrawBoard();
 
         // Get all legal pieces.
         moves = board.GetLegalPieces(this->turn, turn);
 
-
-
         // Fetch a random piece.
         randomInt = rand() % moves.size();
-        std::vector<int> currPiece = moves[randomInt];
+        int currPiece = moves[randomInt];
 
         // Get all moves for current piece.
-        moves = board.GetAllMoves(board.GetBoard()[currPiece[0]][currPiece[1]], turn);
+        moves = board.GetAllMoves(board.GetBoard()[currPiece], turn);
 
         randomInt = rand() % moves.size();
         newMove = moves[randomInt];
 
-        PerformMove(board, {{}}, newMove, currPiece, false);  
-        std::cout << "Enemy moved piece {" << currPiece[0] << ", " << currPiece[1] << "} to {" << newMove[0] << ", " << newMove[1] << "}." << std::endl;
+        PerformMove(board, {}, newMove, currPiece, false);  
+        std::cout << "Enemy moved piece {" << (currPiece / 8) << ", " << (currPiece % 18) << "} to {" << (newMove / 8) << ", " << (newMove % 8) << "}." << std::endl;
     }
 }
 
-void Player::PerformMove(Board& board, const std::vector<std::vector<int>>& moves, const std::vector<int>& newMove, const std::vector<int>& currMove, bool isJump)
+void Player::PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump)
 {
-    int newX = newMove[0];
-    int newY = newMove[1];
-
     if (isJump)
-    { 
-        board.TakePiece(((currMove[0]+newX)/2),((currMove[1]+newY)/2));
+    {
+        // Calculate the position of the piece we just jumped.
+        int takenPiecePos = ((newMove + currMove) / 2);
+
+        board.TakePiece(takenPiecePos);
     }
 
-    board.SwapPieces(currMove[0], currMove[1], newX, newY);
+    board.SwapPieces(currMove, newMove);
 
     // Erase highlights.
     if (isPlayer)
     {
-        board.EraseHighlight(currMove[0],currMove[1]);
+        board.EraseHighlight(currMove);
 
-        for (std::vector<int> x : moves)
+        for (int x : moves)
         {
-            if (board.GetBoard()[x[0]][x[1]].GetType() == 'X')
+            if (board.GetBoard()[x].GetType() == 'X')
             {
-                board.EraseHighlight(x[0], x[1]);
+                board.EraseHighlight(x);
             }
         }
     }
@@ -174,20 +166,19 @@ void Player::PerformMove(Board& board, const std::vector<std::vector<int>>& move
     // Check if player gained advantage or not, respond accordingly.
     isJump ? board.ResetTurnTracker() : board.AddTurnTracker();
 
-    board.CheckKingPiece(newX, newY, this->isPlayer);
+    board.CheckKingPiece(newMove, this->isPlayer);
 }
 
-Piece Player::ExecPlayerMove(Board& board, const std::vector<std::vector<int>>& moves, const std::vector<int>& currMove, bool isJump)
+Piece Player::ExecPlayerMove(Board& board, const std::vector<int>& moves, const int currMove, bool isJump)
 {
     std::string choice = " ";
-    int newX = 0;
-    int newY = 0;
+    int newPos = 0;
 
     do {
         // Highlight moves.
         for (int i = 0; i < moves.size(); ++i)
         {
-            board.HighlightMove(moves[i][0], moves[i][1]);
+            board.HighlightMove(moves[i]);
         }        
 
         // Draw board again.
@@ -196,12 +187,11 @@ Piece Player::ExecPlayerMove(Board& board, const std::vector<std::vector<int>>& 
         std::cout << "Pick a spot to move to for that piece." << std::endl;
         std::cin >> choice;
 
-        newX = choice[1] - '0';
-        newY = choice[0] - '0';
+        newPos = ((choice[1] - '0') * 8) + (choice[0] - '0');
 
-        if (FindMove(moves, {newX, newY}))
+        if (FindMove(moves, newPos))
         {
-            PerformMove(board, moves, {newX, newY}, currMove, isJump);
+            PerformMove(board, moves, newPos, currMove, isJump);
 
             break;
         }
@@ -211,15 +201,15 @@ Piece Player::ExecPlayerMove(Board& board, const std::vector<std::vector<int>>& 
         }
     } while(true);
 
-    return board.GetBoard()[newX][newY];
+    return board.GetBoard()[newPos];
 }
 
 
-bool Player::FindMove(const std::vector<std::vector<int>>& moveBank, const std::vector<int>& move)
+bool Player::FindMove(const std::vector<int>& moveBank, int move)
 {
     for (size_t i{0}; i < moveBank.size(); i++)
     {
-        if (moveBank[i][0] == move[0] && moveBank[i][1] == move[1])
+        if (moveBank[i] == move)
         {
             return true;
         }

@@ -1,6 +1,6 @@
 #include "piece.h"
 
-Piece::Piece(int param_type, int param_team, const std::vector<int>& currPos, const std::vector<std::vector<int>>& cardinalDir)
+Piece::Piece(int param_type, int param_team, int currPos, const std::vector<std::vector<int>>& cardinalDir)
 {
     this->type = param_type;
     this->team = param_team;
@@ -20,9 +20,14 @@ int Piece::GetType()
     return this->type;
 }
 
-const std::vector<int>& Piece::GetCurrPosition()
+int Piece::GetCurrPosition()
 {
     return this->currPosition; 
+}
+
+const std::vector<int> Piece::GetConvCurrPos()
+{
+    return {this->currPosition / 8, this->currPosition % 8};
 }
 
 const std::vector<std::vector<int>>& Piece::GetCardinalDir()
@@ -45,7 +50,7 @@ void Piece::SetType(int param_type)
     this->type = param_type;
 }
 
-void Piece::SetCurrPosition(const std::vector<int>& param_currPosition)
+void Piece::SetCurrPosition(int param_currPosition)
 {
     this->currPosition = param_currPosition;
 }

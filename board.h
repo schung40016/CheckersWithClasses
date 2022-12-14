@@ -12,10 +12,12 @@ constexpr int kingFirstPiece = -23;
 constexpr int kingSecPiece = -24;
 constexpr int noTeam = 32;
 constexpr int turnsForTie = 40;
+constexpr int boardLength = 8;
+constexpr int boardWidth = 8;
 
 class Board {
 private:
-    vector<vector<Piece>> board;
+    vector<Piece> board;
     int turnTracker = 0;
 
 public: 
@@ -29,21 +31,21 @@ public:
 
     bool IsJumpPiece(Piece mainPiece, int turn);
 
-    std::vector<std::vector<int>> GetJumpPieces(int currentPlayer, int turn);
+    std::vector<int> GetJumpPieces(int currentPlayer, int turn);
 
-    std::vector<std::vector<int>> GetLegalPieces(int currentPlayer, int turn);
+    std::vector<int> GetLegalPieces(int currentPlayer, int turn);
 
-    std::vector<std::vector<int>> GetAllMoves(Piece mainPiece, int turn);
+    std::vector<int> GetAllMoves(Piece mainPiece, int turn);
 
-    void SwapPieces(int currMoveX, int currMoveY, int newX, int newY);
+    void SwapPieces(int currMove, int newMove);
 
-    void HighlightMove(int x, int y);
+    void HighlightMove(int currPos);
 
-    void TakePiece(int x, int y);
+    void TakePiece(int currPos);
 
-    void EraseHighlight(int x, int y);
+    void EraseHighlight(int currPos);
 
-    void CheckKingPiece(int x, int y, bool isPlayer);
+    void CheckKingPiece(int currPos, bool isPlayer);
 
     void ResetTurnTracker();
 
@@ -52,7 +54,7 @@ public:
     bool CheckTie();
 
     // Setters and Getters
-    vector<vector<Piece>>& GetBoard();
+    vector<Piece>& GetBoard();
 
     int GetTurnTracker();
 };
