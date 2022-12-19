@@ -1,6 +1,16 @@
 #include "piece.h"
 #include "board.h"
 #include "player.h"
+#include "ai.h"
+#include "user.h"
+#include <queue>
+
+/*
+Goals: 
+- Create game class and move all main loop code items into game class.
+- Refactor some of the calculation code into piece class. 
+*/  
+
 
 int main()
 {
@@ -24,35 +34,55 @@ int main()
 
     response == 0 ? enemyTurn = 1 : enemyTurn = 0;
 
-    Player user(response, 12, true);
-    Player enemy(enemyTurn, 12, false);
+    std::queue<Player*> turnQueue;
+    User user(response, 12, true);
+    Ai enemy(enemyTurn, 12, false);
 
-    Player& first = response == 0 ? user : enemy;
-    Player& second = response == 1 ? user : enemy;
+    User *u;
+    Ai *a;
+    u = new User(response, 12, true);
+    a = new Ai(enemyTurn, 12, false);
+
+    if (response == 0)
+    {
+        turnQueue.push(u);
+        turnQueue.push(a);
+    }
+    else
+    {
+        turnQueue.push(a);
+        turnQueue.push(u);
+    }
 
     Board board(user.GetTurn(), enemy.GetTurn());
 
     bool noMoves = false;
 
+    Player* first;
+    Player* second;
+
     // Game Loop.
     while (user.GetPieceCount() != 0 && enemy.GetPieceCount() != 0)
     {
-        if (board.GetLegalPieces(first.GetTurn(), turn).size() == 0 && board.GetLegalPieces(second.GetTurn() , turn).size() == 0)
+        first = turnQueue.front();
+        turnQueue.pop();
+        second = turnQueue.front();
+
+        if (board.GetLegalPieces(first->GetTurn(), turn).size() == 0 && board.GetLegalPieces(second->GetTurn() , turn).size() == 0)
         {
             noMoves = true;
             break;
         }
 
-        if (board.GetLegalPieces(first.GetTurn(), turn).size() == 0)
+        if (board.GetLegalPieces(first->GetTurn(), turn).size() == 0)
         {
-            first.SetTakePiece(first.GetPieceCount());
+            first->SetTakePiece(first->GetPieceCount());
             break;
         }
 
-        if (board.GetLegalPieces(second.GetTurn(), turn).size() == 0)
+        if (board.GetLegalPieces(second->GetTurn(), turn).size() == 0)
         {
-            std::cout << "how" << std::endl;
-            second.SetTakePiece(second.GetPieceCount());
+            second->SetTakePiece(second->GetPieceCount());
             break;
         }
 
@@ -60,19 +90,20 @@ int main()
         std::vector<int> jumpPieces;
 
         std::cout << "Turn Tracker: " << board.GetTurnTracker() << "." << std::endl;
+        std::cout << "First player: " << first->GetIsPlayer() << "." << std::endl;
 
-        jumpPieces = board.GetJumpPieces(first.GetTurn(), turn);
+        jumpPieces = board.GetJumpPieces(first->GetTurn(), turn);
 
         if (jumpPieces.size() > 0)
         {
-            first.PerformJumpMove(board, jumpPieces, second, turn);
+            first->PerformJumpMove(board, jumpPieces, *second, turn);
         }
         else
         {
-            first.PerformRegMove(board, second, turn);
+            first->PerformRegMove(board, *second, turn);
         }
 
-        std::swap(first, second);
+        turnQueue.push(first);
 
         turn++;
 
@@ -80,11 +111,6 @@ int main()
         {
             break;
         }
-    }
-
-    if (response != user.GetTurn())
-    {
-        std::swap(user, enemy);
     }
 
     if (board.CheckTie() || noMoves)
@@ -95,14 +121,7 @@ int main()
     }
     else
     {
-        if (user.GetPieceCount() == 0)
-        {
-            std::cout << "You Lost! " << " The enemy won with " << enemy.GetPieceCount() << " pieces on the board." << std::endl;
-        }
-        else
-        {
-            std::cout << "You WON, with " << user.GetPieceCount() << " pieces on the board." << std::endl;
-        }
+        std::cout << typeid(*second).name() << " won with " << second->GetPieceCount() << " pieces on the board." << std::endl;
     }
 
     std::cout << "Goodbye!";

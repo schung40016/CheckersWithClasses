@@ -1,9 +1,5 @@
 #include "board.h"
 
-// None: 
-// Black:
-// White: 
-
 Board::Board (int userTurn, int enemyTurn)
 {
     int rowCount = 8;
