@@ -53,6 +53,8 @@ public:
 
     bool CheckTie();
 
+    int Conv2Dto1D(int x, int y);
+
     // Setters and Getters
     vector<Piece>& GetBoard();
 

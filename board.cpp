@@ -2,7 +2,7 @@
 
 Board::Board (int userTurn, int enemyTurn)
 {
-    int rowCount = 8;
+    int rowCount = boardWidth;
     std::vector<std::vector<int>> playerDir = {{-1, 1}, {1, 1}};
     std::vector<std::vector<int>> enemyDir = {{-1, -1}, {1, -1}};
 
@@ -23,11 +23,11 @@ void Board::DrawBoard ()
 {
     std::cout << "\n\n\n";
 
-    for (int i = ((boardLength - 1) * boardLength); i >= 0; i -= 8)
+    for (int i = ((boardLength - 1) * boardLength); i >= 0; i -= boardLength)
     {
-        std::cout << (i / 8) << " " << char(-70); 
+        std::cout << (i / boardLength) << " " << char(-70); 
 
-        for (int j = i; j < (i + 8); ++j)
+        for (int j = i; j < (i + boardWidth); ++j)
         {
             board[j].GetType() == 32 ? std::cout << "  " : std::cout << char(board[j].GetType()) << " ";
         }
@@ -36,7 +36,7 @@ void Board::DrawBoard ()
     }
     
     std::cout  << "  " << char(-56); 
-    for (size_t i{0}; i < 16; ++i)
+    for (size_t i{0}; i < (boardWidth * 2); ++i)
     {
         std::cout << char(-51);
     }
@@ -50,9 +50,9 @@ void Board::PrintBlock(int team, int rowSize, int start, int end, const std::vec
 
     for (int i = start; i < end; ++i)
     {
-        if (i % 8 == 0)
+        if (i % boardLength == 0)
         {
-            if ((i / 8) % 2 == 0)
+            if ((i / boardWidth) % 2 == 0)
             {
                 isEvenRow = true;
             }
@@ -85,33 +85,25 @@ bool Board::OutOfBounds(std::vector<int> param_position)
 
 bool Board::IsJumpPiece(Piece mainPiece, int turn)
 {
-    std::vector<std::vector<int>> cardinalDir = mainPiece.GetCardinalDir();
-    std::vector<int> currPosition = mainPiece.GetConvCurrPos();
-    int currentPos = mainPiece.GetCurrPosition();
+    std::vector<std::vector<int>> newPositions = mainPiece.CalcNewPos(false);
+    std::vector<std::vector<int>> jumpPositions = mainPiece.CalcNewPos(true);
 
-    for (std::vector<int> pos : cardinalDir)
+    for (int i = 0; i < newPositions.size(); ++i)
     {
-        int newX = currPosition[0] + pos[1];
-        int newY = currPosition[1] + pos[0];
-
-        if (OutOfBounds({newX, newY}))
+        if (OutOfBounds({newPositions[i][0], newPositions[i][1]}))
         {
             continue;
         }
 
-        int newPos = (currentPos + (pos[1] * 8)) + (pos[0]);
+        int newPos = Conv2Dto1D(newPositions[i][0], newPositions[i][1]);
 
         if (!(board[newPos].GetTeam() == mainPiece.GetTeam() || board[newPos].GetType() == noTeam))
         {
-            newX = currPosition[0] + (pos[1] * 2);
-            newY = currPosition[1] + (pos[0] * 2);
-
-            // Check if landing position is blocked.
-            if (!OutOfBounds({newX, newY})) 
+            if (!OutOfBounds({jumpPositions[i][0], jumpPositions[i][1]})) 
             {
-                int newPos = (currentPos + ((pos[1] * 2) * 8)) + (pos[0] * 2);
+                newPos = Conv2Dto1D(jumpPositions[i][0], jumpPositions[i][1]);
 
-                if (board[newPos].GetType() == 32)
+                if (board[newPos].GetType() == noTeam)
                 {
                     return true;
                 }
@@ -166,39 +158,29 @@ std::vector<int> Board::GetLegalPieces(int currentPlayer, int turn)
 // Not fetching correct moves.
 std::vector<int> Board::GetAllMoves(Piece mainPiece, int turn)
 {
-    std::vector<std::vector<int>> potentialMoves = mainPiece.GetCardinalDir();
+    std::vector<std::vector<int>> newPositions = mainPiece.CalcNewPos(false);
+    std::vector<std::vector<int>> jumpPositions = mainPiece.CalcNewPos(true);
     std::vector<int> result;
     std::vector<int> jumpMoves;
-    std::vector<int> currPosition = mainPiece.GetConvCurrPos();
-    int currentPos = mainPiece.GetCurrPosition();
 
-    // Determine available directional moves.
-    potentialMoves = mainPiece.GetCardinalDir();
-
-    for (std::vector<int> pos : potentialMoves)
+    for (int i = 0; i < newPositions.size(); ++i)
     {
-        int newX = currPosition[0] + pos[1];
-        int newY = currPosition[1] + pos[0];
-
-        int newPos = (currentPos + (pos[1] * 8)) + (pos[0]);
+        int newPos = Conv2Dto1D(newPositions[i][0], newPositions[i][1]);
 
         // Check if invalid space.
-        if (OutOfBounds({newX, newY}))
+        if (OutOfBounds({newPositions[i][0], newPositions[i][1]}))
         {
             continue;
         }
         // Check potential jumps.
-        else if (!(board[newPos].GetTeam() == mainPiece.GetTeam() || board[newPos].GetType() == 32))
+        else if (!(board[newPos].GetTeam() == mainPiece.GetTeam() || board[newPos].GetType() == noTeam))
         {
-            newX = currPosition[0] + (pos[1] * 2);
-            newY = currPosition[1] + (pos[0] * 2);
-
-            if (!OutOfBounds({newX, newY}))
+            if (!OutOfBounds({jumpPositions[i][0], jumpPositions[i][1]}))
             {
-                newPos = (currentPos + ((pos[1] * 2) * 8)) + (pos[0] * 2);
+                newPos = Conv2Dto1D(jumpPositions[i][0], jumpPositions[i][1]);
 
                 // Check if landing position is blocked.
-                if (board[newPos].GetType() == 32)
+                if (board[newPos].GetType() == noTeam)
                 {
                     jumpMoves.push_back(newPos);
                 }
@@ -245,20 +227,21 @@ void Board::EraseHighlight(int pos)
 
 void Board::TakePiece(int pos)
 {
-    board[pos].SetType(' ');
-    board[pos].SetTeam(noTeam);
-    board[pos].SetCardinalDir({{}});
+    board[pos].ResetPiece(noTeam);
 }
 
 void Board::CheckKingPiece(int currPos, bool isPlayer)
 {
     // Any super pieces to transform?
-    if (((currPos / boardLength == 7) && isPlayer) || (((currPos / boardLength == 0)) && !isPlayer))
+    if (board[currPos].GetType() == regFirstPiece || board[currPos].GetType() == regSecPiece)
     {
-        board[currPos].GetType() == regFirstPiece ? board[currPos].Promote(kingFirstPiece) : board[currPos].Promote(kingSecPiece);
-        
-        // Player gained advantage, reset turn tracker.
-        turnTracker = 0;
+        if (((currPos / boardLength == 7) && isPlayer) || (((currPos / boardLength == 0)) && !isPlayer))
+        {
+            board[currPos].GetType() == regFirstPiece ? board[currPos].Promote(kingFirstPiece) : board[currPos].Promote(kingSecPiece);
+            
+            // Player gained advantage, reset turn tracker.
+            turnTracker = 0;
+        }
     }
 }
 
@@ -290,4 +273,9 @@ std::vector<Piece>& Board::GetBoard()
 int Board::GetTurnTracker()
 {
     return this->turnTracker;
+}
+
+int Board::Conv2Dto1D(int x, int y)
+{
+    return ((x * 8) + y);
 }

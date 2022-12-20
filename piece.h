@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 
 class Piece
@@ -14,6 +13,10 @@ public:
     Piece(int param_type, int param_team, int param_currPos, const std::vector<std::vector<int>>& cardinalDir);
 
     void Promote(int pieceType);
+
+    const std::vector<std::vector<int>> CalcNewPos(bool checkJump);
+
+    void ResetPiece(int noTeamNum);
 
     //Getters and Setters
     int GetType();
