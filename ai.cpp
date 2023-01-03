@@ -2,6 +2,7 @@
 
 Ai::Ai(int turn, int pieceCount, bool isPlayer) : Player (turn, pieceCount, isPlayer)
 {
+    srand((unsigned) time(NULL));
 }
 
 void Ai::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& enemyPlayer, int turn)
@@ -62,7 +63,7 @@ void Ai::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
     newMove = moves[randomInt];
 
     PerformMove(board, {}, newMove, currPiece, false);  
-    std::cout << "Enemy moved piece {" << (currPiece / 8) << ", " << (currPiece % 18) << "} to {" << (newMove / 8) << ", " << (newMove % 8) << "}." << std::endl;
+    std::cout << "Enemy moved piece {" << (currPiece % 8) << ", " << (currPiece / 8) << "} to {" << (newMove % 8) << ", " << (newMove / 8) << "}." << std::endl;
 }
 
 void Ai::PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump)

@@ -4,8 +4,6 @@
 #include <vector>
 #include "piece.h"
 
-using namespace std;
-
 constexpr int regFirstPiece = 1;
 constexpr int regSecPiece = 2;
 constexpr int kingFirstPiece = -23;
@@ -17,7 +15,7 @@ constexpr int boardWidth = 8;
 
 class Board {
 private:
-    vector<Piece> board;
+    std::vector<Piece> board;
     int turnTracker = 0;
 
 public: 
@@ -56,7 +54,7 @@ public:
     int Conv2Dto1D(int x, int y);
 
     // Setters and Getters
-    vector<Piece>& GetBoard();
+    std::vector<Piece>& GetBoard();
 
     int GetTurnTracker();
 };

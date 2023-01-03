@@ -4,6 +4,7 @@
 #include "ai.h"
 #include "user.h"
 #include <queue>
+#include "checkersGame.h"
 
 /*
 Goals: 
@@ -16,6 +17,7 @@ int main()
 {
     int enemyTurn = 0;
     int turn = 0;
+    bool endGame = false;
 
     int response = 0;
 
@@ -34,94 +36,29 @@ int main()
 
     response == 0 ? enemyTurn = 1 : enemyTurn = 0;
 
-    std::queue<Player*> turnQueue;
-    User user(response, 12, true);
-    Ai enemy(enemyTurn, 12, false);
-
-    User *u;
-    Ai *a;
-    u = new User(response, 12, true);
-    a = new Ai(enemyTurn, 12, false);
-
-    if (response == 0)
-    {
-        turnQueue.push(u);
-        turnQueue.push(a);
-    }
-    else
-    {
-        turnQueue.push(a);
-        turnQueue.push(u);
-    }
-
-    Board board(user.GetTurn(), enemy.GetTurn());
-
-    bool noMoves = false;
-
-    Player* first;
-    Player* second;
+    CheckersGame game(response, enemyTurn);
 
     // Game Loop.
-    while (user.GetPieceCount() != 0 && enemy.GetPieceCount() != 0)
+    while (game.CheckLosers())
     {
-        first = turnQueue.front();
-        turnQueue.pop();
-        second = turnQueue.front();
+        std::cout << "hey" << std::endl;
+        endGame = game.Playturn(turn);
 
-        if (board.GetLegalPieces(first->GetTurn(), turn).size() == 0 && board.GetLegalPieces(second->GetTurn() , turn).size() == 0)
-        {
-            noMoves = true;
-            break;
-        }
+        ++turn;
 
-        if (board.GetLegalPieces(first->GetTurn(), turn).size() == 0)
-        {
-            first->SetTakePiece(first->GetPieceCount());
-            break;
-        }
-
-        if (board.GetLegalPieces(second->GetTurn(), turn).size() == 0)
-        {
-            second->SetTakePiece(second->GetPieceCount());
-            break;
-        }
-
-        board.DrawBoard();
-        std::vector<int> jumpPieces;
-
-        std::cout << "Turn Tracker: " << board.GetTurnTracker() << "." << std::endl;
-        std::cout << "First player: " << first->GetIsPlayer() << "." << std::endl;
-
-        jumpPieces = board.GetJumpPieces(first->GetTurn(), turn);
-
-        if (jumpPieces.size() > 0)
-        {
-            first->PerformJumpMove(board, jumpPieces, *second, turn);
-        }
-        else
-        {
-            first->PerformRegMove(board, *second, turn);
-        }
-
-        turnQueue.push(first);
-
-        turn++;
-
-        if (board.CheckTie())
+        if (endGame)
         {
             break;
         }
     }
 
-    if (board.CheckTie() || noMoves)
+    if (game.CheckTie() || game.GetNoMoves())
     {
-        std::cout << "Game ended in a draw! Due to one of these circumstances - " << std::endl;
-        std::cout << "No move rule: neither side could make a move." << std::endl;
-        std::cout << "40 turn rule: neither side gained an advantage for 40 consecutive turns, thus the game is a draw" << std::endl;
+        game.PrintDraw();
     }
     else
     {
-        std::cout << typeid(*second).name() << " won with " << second->GetPieceCount() << " pieces on the board." << std::endl;
+        game.PrintWinner();
     }
 
     std::cout << "Goodbye!";
