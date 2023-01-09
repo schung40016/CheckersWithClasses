@@ -1,11 +1,8 @@
 #include "player.h"
 
-Player::Player (int turn, int pieceCount, bool isPlayer)
+Player::Player (int param_turn, int param_pieceCount, bool param_isPlayer)
+    : turn(param_turn), pieceCount(param_pieceCount), isPlayer(param_isPlayer)
 {
-    time(NULL);
-    this->turn = turn;
-    this->pieceCount = pieceCount;
-    this->isPlayer = isPlayer;
 }
 
 bool Player::FindMove(const std::vector<int>& moveBank, int move)

@@ -82,7 +82,8 @@ void CheckersGame::PrintDraw()
 
 void CheckersGame::PrintWinner()
 {
-    std::cout << typeid(*second).name() << " won with " << second->GetPieceCount() << " pieces on the board." << std::endl;
+    std::cout << typeid(*first).name() << " won with " << first->GetPieceCount() << " pieces on the board." << std::endl;
+    std::cout << typeid(*second).name() << " lost!" << std::endl;
 }
 
 bool CheckersGame::CheckLosers()

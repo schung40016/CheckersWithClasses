@@ -10,7 +10,7 @@ private:
     std::vector<std::vector<int>> cardinalDir = {{0,0}};
 
 public:
-    Piece(int param_type, int param_team, int param_currPos, const std::vector<std::vector<int>>& cardinalDir);
+    Piece(int param_type, int param_team, int param_currPos, const std::vector<std::vector<int>>& param_cardinalDir);
 
     void Promote(int pieceType);
 

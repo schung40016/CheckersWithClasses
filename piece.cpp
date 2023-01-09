@@ -1,11 +1,8 @@
 #include "piece.h"
 
-Piece::Piece(int param_type, int param_team, int currPos, const std::vector<std::vector<int>>& cardinalDir)
+Piece::Piece(int param_type, int param_team, int param_currPos, const std::vector<std::vector<int>>& param_cardinalDir)
+    : type(param_type), team(param_team), currPosition(param_currPos), cardinalDir(param_cardinalDir)
 {
-    this->type = param_type;
-    this->team = param_team;
-    this->currPosition = currPos;
-    this->cardinalDir = cardinalDir;
 }
 
 void Piece::Promote(int pieceType)
