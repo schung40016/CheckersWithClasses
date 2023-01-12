@@ -4,19 +4,15 @@
 #include <vector>
 #include "piece.h"
 
-constexpr int regFirstPiece = 1;
-constexpr int regSecPiece = 2;
-constexpr int kingFirstPiece = -23;
-constexpr int kingSecPiece = -24;
 constexpr int noTeam = 32;
 constexpr int turnsForTie = 40;
-constexpr int boardLength = 8;
-constexpr int boardWidth = 8;
 
 class Board {
 private:
     std::vector<Piece> board;
     int turnTracker = 0;
+    int boardLength = 8;
+    int boardWidth = 8;
 
 public: 
     Board(int userTurn, int enemyTurn);
@@ -43,8 +39,6 @@ public:
 
     void EraseHighlight(int currPos);
 
-    void CheckKingPiece(int currPos, bool isPlayer);
-
     void ResetTurnTracker();
 
     void AddTurnTracker();
@@ -57,5 +51,9 @@ public:
     std::vector<Piece>& GetBoard();
 
     int GetTurnTracker();
+
+    int GetBoardLength();
+
+    int GetBoardWidth();
 };
 

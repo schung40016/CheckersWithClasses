@@ -41,7 +41,6 @@ int main()
     // Game Loop.
     while (game.CheckLosers())
     {
-        std::cout << "hey" << std::endl;
         endGame = game.Playturn(turn);
 
         ++turn;

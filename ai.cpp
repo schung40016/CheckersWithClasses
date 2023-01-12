@@ -81,5 +81,8 @@ void Ai::PerformMove(Board& board, const std::vector<int>& moves, int newMove, i
     // Check if player gained advantage or not, respond accordingly.
     isJump ? board.ResetTurnTracker() : board.AddTurnTracker();
 
-    board.CheckKingPiece(newMove, this->isPlayer);
+    if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
+    {
+        board.ResetTurnTracker();
+    }
 }

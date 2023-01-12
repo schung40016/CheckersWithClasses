@@ -88,7 +88,6 @@ void CheckersGame::PrintWinner()
 
 bool CheckersGame::CheckLosers()
 {
-    std::cout << "hello" << std::endl;
     bool loser = (u->GetPieceCount() != 0 && a->GetPieceCount() != 0);   
     return loser;
 }

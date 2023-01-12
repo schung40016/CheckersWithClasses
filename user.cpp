@@ -97,7 +97,10 @@ void User::PerformMove(Board& board, const std::vector<int>& moves, int newMove,
     // Check if player gained advantage or not, respond accordingly.
     isJump ? board.ResetTurnTracker() : board.AddTurnTracker();
 
-    board.CheckKingPiece(newMove, this->isPlayer);
+    if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
+    {
+        board.ResetTurnTracker();
+    }
 }
 
 Piece User::ExecPlayerMove(Board& board, const std::vector<int>& moves, const int currMove, bool isJump)
