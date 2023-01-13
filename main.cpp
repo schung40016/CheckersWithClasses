@@ -16,7 +16,6 @@ Goals:
 int main()
 {
     int enemyTurn = 0;
-    int turn = 0;
     bool endGame = false;
 
     int response = 0;
@@ -41,9 +40,7 @@ int main()
     // Game Loop.
     while (game.CheckLosers())
     {
-        endGame = game.Playturn(turn);
-
-        ++turn;
+        endGame = game.Playturn();
 
         if (endGame)
         {

@@ -5,12 +5,10 @@
 #include "piece.h"
 
 constexpr int noTeam = 32;
-constexpr int turnsForTie = 40;
 
 class Board {
 private:
     std::vector<Piece> board;
-    int turnTracker = 0;
     int boardLength = 8;
     int boardWidth = 8;
 
@@ -39,18 +37,10 @@ public:
 
     void EraseHighlight(int currPos);
 
-    void ResetTurnTracker();
-
-    void AddTurnTracker();
-
-    bool CheckTie();
-
     int Conv2Dto1D(int x, int y);
 
     // Setters and Getters
     std::vector<Piece>& GetBoard();
-
-    int GetTurnTracker();
 
     int GetBoardLength();
 

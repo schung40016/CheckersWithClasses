@@ -22,7 +22,7 @@ CheckersGame::CheckersGame(int playerTurn, int enemyTurn)
     board = new Board(user.GetTurn(), enemy.GetTurn());
 }
 
-bool CheckersGame::Playturn(int turn)
+bool CheckersGame::Playturn()
 {
     first = turnQueue.front();
     turnQueue.pop();
@@ -49,7 +49,7 @@ bool CheckersGame::Playturn(int turn)
     board->DrawBoard();
     std::vector<int> jumpPieces;
 
-    std::cout << "Turn Tracker: " << board->GetTurnTracker() << "." << std::endl;
+    std::cout << "Turn Tracker: " << turnTracker << "." << std::endl;
     std::cout << "First player: " << first->GetIsPlayer() << "." << std::endl;
 
     jumpPieces = board->GetJumpPieces(first->GetTurn(), turn);
@@ -57,15 +57,29 @@ bool CheckersGame::Playturn(int turn)
     if (jumpPieces.size() > 0)
     {
         first->PerformJumpMove(*board, jumpPieces, *second, turn);
+
+        // Piece taken. One player gained advantage.
+        turnTracker = 0;
     }
     else
     {
-        first->PerformRegMove(*board, *second, turn);
+        bool gainAdvantage = first->PerformRegMove(*board, *second, turn);
+        
+        if (gainAdvantage)
+        {
+            turnTracker = 0;
+        }
+        else
+        {
+            ++turnTracker;
+        }
     }
+
+    ++turn;
 
     turnQueue.push(first);
 
-    if (board->CheckTie())
+    if (this->CheckTie())
     {
         return true;
     }
@@ -94,7 +108,12 @@ bool CheckersGame::CheckLosers()
 
 bool CheckersGame::CheckTie()
 {
-    return board->CheckTie();
+    if (turnTracker == turnsForTie)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 bool CheckersGame::GetNoMoves()

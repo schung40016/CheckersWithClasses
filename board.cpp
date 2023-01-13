@@ -212,34 +212,9 @@ void Board::TakePiece(int pos)
     board[pos].ResetPiece(noTeam);
 }
 
-void Board::ResetTurnTracker()
-{
-    this->turnTracker = 0;
-}
-
-void Board::AddTurnTracker()
-{
-    this->turnTracker++;
-}
-
-bool Board::CheckTie()
-{
-    if (turnTracker == turnsForTie)
-    {
-        return true;
-    }
-
-    return false;
-}
-
 std::vector<Piece>& Board::GetBoard()
 {
     return this->board;
-}
-
-int Board::GetTurnTracker()
-{
-    return this->turnTracker;
 }
 
 int Board::GetBoardLength()

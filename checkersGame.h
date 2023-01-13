@@ -6,6 +6,8 @@
 #include "player.h"
 #include "board.h"
 
+constexpr int turnsForTie = 40;
+
 class CheckersGame {
 private:
     std::queue<Player*> turnQueue;
@@ -15,11 +17,13 @@ private:
     Player* second;
     Board* board;
     bool noMoves = false;
+    int turn = 0;
+    int turnTracker = 0;
 
 public: 
     CheckersGame(int playerTurn, int enemyTurn);
 
-    bool Playturn(int turn);
+    bool Playturn();
 
     void PrintDraw();
 
@@ -30,4 +34,8 @@ public:
     bool CheckTie();
 
     bool GetNoMoves();
+
+    void ResetTurnTracker();
+
+    void AddTurnTracker();
 };

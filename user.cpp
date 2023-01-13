@@ -40,7 +40,7 @@ void User::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& e
     } while (board.IsJumpPiece(newJumpPos, turn));
 }
 
-void User::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
+bool User::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
 {
     std::vector<int> moves = {};
     int currPos = 0;
@@ -69,7 +69,9 @@ void User::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
             break;
         }
     }
-    ExecPlayerMove(board, moves, currPos, false);
+    Piece newTemp = ExecPlayerMove(board, moves, currPos, false);
+
+    return CheckKingTransform(board, newTemp.GetCurrPosition());
 }
 
 void User::PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump)
@@ -93,14 +95,15 @@ void User::PerformMove(Board& board, const std::vector<int>& moves, int newMove,
             board.EraseHighlight(x);
         }
     }
+}
 
-    // Check if player gained advantage or not, respond accordingly.
-    isJump ? board.ResetTurnTracker() : board.AddTurnTracker();
-
+bool User::CheckKingTransform(Board& board, int newMove)
+{
     if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
     {
-        board.ResetTurnTracker();
+        return true;
     }
+    return false;
 }
 
 Piece User::ExecPlayerMove(Board& board, const std::vector<int>& moves, const int currMove, bool isJump)

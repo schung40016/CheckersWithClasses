@@ -18,9 +18,11 @@ public:
 
     virtual void PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& enemyPlayer, int turn) {};
 
-    virtual void PerformRegMove(Board& board, Player& enemyPlayer, int turn) {};
+    virtual bool PerformRegMove(Board& board, Player& enemyPlayer, int turn) { return false; };
 
     virtual void PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump) {};
+
+    virtual bool CheckKingTransform(int newPos) { return false; };
 
     bool FindMove(const std::vector<int>& moveBank, int move);
 

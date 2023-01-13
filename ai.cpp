@@ -38,7 +38,7 @@ void Ai::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& ene
     } while(board.IsJumpPiece(board.GetBoard()[newMove], turn)); 
 }
 
-void Ai::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
+bool Ai::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
 {
     std::vector<int> moves = {};
     int currPos = 0;
@@ -64,6 +64,8 @@ void Ai::PerformRegMove(Board& board, Player& enemyPlayer, int turn)
 
     PerformMove(board, {}, newMove, currPiece, false);  
     std::cout << "Enemy moved piece {" << (currPiece % 8) << ", " << (currPiece / 8) << "} to {" << (newMove % 8) << ", " << (newMove / 8) << "}." << std::endl;
+
+    return CheckKingTransform(board, newMove);
 }
 
 void Ai::PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump)
@@ -77,12 +79,13 @@ void Ai::PerformMove(Board& board, const std::vector<int>& moves, int newMove, i
     }
 
     board.SwapPieces(currMove, newMove);
+}
 
-    // Check if player gained advantage or not, respond accordingly.
-    isJump ? board.ResetTurnTracker() : board.AddTurnTracker();
-
+bool Ai::CheckKingTransform(Board& board, int newMove)
+{
     if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
     {
-        board.ResetTurnTracker();
+        return true;
     }
+    return false;
 }

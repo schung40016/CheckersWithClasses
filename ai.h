@@ -9,7 +9,9 @@ public:
 
     void PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& enemyPlayer, int turn);
 
-    void PerformRegMove(Board& board, Player& enemyPlayer, int turn);
+    bool PerformRegMove(Board& board, Player& enemyPlayer, int turn);
 
     void PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump);
+
+    bool CheckKingTransform(Board& board, int newPos);
 };
