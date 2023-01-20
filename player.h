@@ -26,6 +26,8 @@ public:
 
     bool FindMove(const std::vector<int>& moveBank, int move);
 
+    bool CheckKingTransform(Board& board, int newMove);
+
     // Getters & Setters
     int GetPieceCount();
 

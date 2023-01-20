@@ -21,7 +21,7 @@ void User::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& e
             std::cout << "You have a piece to jump." << std::endl;
             std::cin >> playerResponse;
 
-            newPos = ((playerResponse[1] - '0') * 8) + (playerResponse[0] - '0');
+            newPos = ConvCoordToPos(playerResponse[0], playerResponse[1]);
 
             if (FindMove(jumpPieces, newPos) == false)
             {
@@ -37,6 +37,9 @@ void User::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& e
         jumpPieces = board.GetJumpPieces(this->turn, turn);
 
         enemyPlayer.SetTakePiece(1);
+
+        CheckKingTransform(board, newJumpPos.GetCurrPosition());
+
     } while (board.IsJumpPiece(newJumpPos, turn));
 }
 
@@ -97,15 +100,6 @@ void User::PerformMove(Board& board, const std::vector<int>& moves, int newMove,
     }
 }
 
-bool User::CheckKingTransform(Board& board, int newMove)
-{
-    if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
-    {
-        return true;
-    }
-    return false;
-}
-
 Piece User::ExecPlayerMove(Board& board, const std::vector<int>& moves, const int currMove, bool isJump)
 {
     std::string choice = " ";
@@ -124,7 +118,7 @@ Piece User::ExecPlayerMove(Board& board, const std::vector<int>& moves, const in
         std::cout << "Pick a spot to move to for that piece." << std::endl;
         std::cin >> choice;
 
-        newPos = ((choice[1] - '0') * 8) + (choice[0] - '0');
+        newPos = ConvCoordToPos(choice[0], choice[1]);
 
         if (FindMove(moves, newPos))
         {
@@ -139,4 +133,9 @@ Piece User::ExecPlayerMove(Board& board, const std::vector<int>& moves, const in
     } while(true);
 
     return board.GetBoard()[newPos];
+}
+
+int User::ConvCoordToPos(int x, int y)
+{
+    return ((y - '0') * 8) + (x - '0');
 }

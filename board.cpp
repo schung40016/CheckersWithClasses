@@ -80,14 +80,14 @@ bool Board::IsJumpPiece(Piece mainPiece, int turn)
 
     for (int i = 0; i < newPositions.size(); ++i)
     {
-        if (newPositions[i] == -1)
+        if (newPositions[i] == notValidPos)
         {
             continue;
         }
 
         if (!(board[newPositions[i]].GetTeam() == mainPiece.GetTeam() || board[newPositions[i]].GetType() == noTeam))
         {
-            if (jumpPositions[i] != -1) 
+            if (jumpPositions[i] != notValidPos) 
             {
                 if (board[jumpPositions[i]].GetType() == noTeam)
                 {
@@ -152,14 +152,14 @@ std::vector<int> Board::GetAllMoves(Piece mainPiece, int turn)
     for (int i = 0; i < newPositions.size(); ++i)
     {
         // Check if invalid space.
-        if (newPositions[i] == -1)
+        if (newPositions[i] == notValidPos)
         {
             continue;
         }
         // Check potential jumps.
         else if (!(board[newPositions[i]].GetTeam() == mainPiece.GetTeam() || board[newPositions[i]].GetType() == noTeam))
         {
-            if (jumpPositions[i] != -1)
+            if (jumpPositions[i] != notValidPos)
             {
                 // Check if landing position is blocked.
                 if (board[jumpPositions[i]].GetType() == noTeam)

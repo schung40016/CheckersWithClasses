@@ -5,6 +5,7 @@
 #include "piece.h"
 
 constexpr int noTeam = 32;
+constexpr int notValidPos = -1;
 
 class Board {
 private:

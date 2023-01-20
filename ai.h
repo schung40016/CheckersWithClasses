@@ -12,6 +12,4 @@ public:
     bool PerformRegMove(Board& board, Player& enemyPlayer, int turn);
 
     void PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump);
-
-    bool CheckKingTransform(Board& board, int newPos);
 };

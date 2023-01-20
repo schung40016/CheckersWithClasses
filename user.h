@@ -13,7 +13,7 @@ public:
 
     void PerformMove(Board& board, const std::vector<int>& moves, int newMove, int currMove, bool isJump);
 
-    bool CheckKingTransform(Board& board, int newPos);
-
     Piece ExecPlayerMove(Board& board, const std::vector<int>& moves, const int currMove, bool isJump);
+
+    int ConvCoordToPos(int x, int y);
 };

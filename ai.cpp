@@ -35,6 +35,9 @@ void Ai::PerformJumpMove(Board& board, std::vector<int>& jumpPieces, Player& ene
         std::cout << "Enemy moved piece {" << (currPiece / 8) << ", " << (currPiece % 8) << "} to {" << (newMove / 8) << ", " << (newMove % 8) << "}." << std::endl;
 
         enemyPlayer.SetTakePiece(1);
+
+        CheckKingTransform(board, newMove);
+
     } while(board.IsJumpPiece(board.GetBoard()[newMove], turn)); 
 }
 
@@ -79,13 +82,4 @@ void Ai::PerformMove(Board& board, const std::vector<int>& moves, int newMove, i
     }
 
     board.SwapPieces(currMove, newMove);
-}
-
-bool Ai::CheckKingTransform(Board& board, int newMove)
-{
-    if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
-    {
-        return true;
-    }
-    return false;
 }

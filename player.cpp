@@ -18,6 +18,16 @@ bool Player::FindMove(const std::vector<int>& moveBank, int move)
     return false;
 }
 
+bool Player::CheckKingTransform(Board& board, int newMove)
+{
+    if (board.GetBoard()[newMove].CheckKingPiece(this->isPlayer, board.GetBoardWidth(), board.GetBoardLength()))
+    {
+        return true;
+    }
+    return false;
+}
+
+// Getters and setters
 int Player::GetTurn()
 {
     return this->turn;
